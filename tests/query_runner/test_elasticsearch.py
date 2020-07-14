@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from redash.query_runner.elasticsearch2 import ElasticSearch2, XPackSQLElasticSearch
+from redash.query_runner.elasticsearch import Elasticsearch
 
 
 class TestElasticSearch(TestCase):
@@ -48,7 +48,7 @@ class TestElasticSearch(TestCase):
                 'geo.long': 'integer'
             }
         }
-        self.assertDictEqual(ElasticSearch2._parse_mappings(mapping_data), expected)
+        self.assertDictEqual(Elasticsearch._parse_mappings(mapping_data), expected)
 
     def test_parse_aggregation(self):
         response = {
@@ -118,7 +118,7 @@ class TestElasticSearch(TestCase):
             ]
         }
         fields = ['group_by_state', 'group_by_state.doc_count']
-        self.assertDictEqual(ElasticSearch2._parse_results(fields, response), expected)
+        self.assertDictEqual(Elasticsearch._parse_results(fields, response), expected)
 
     def test_parse_sub_aggregation(self):
         response = {
@@ -186,82 +186,4 @@ class TestElasticSearch(TestCase):
             ]
         }
         fields = ['group_by_state', 'group_by_state.average_balance.value']
-        self.assertDictEqual(ElasticSearch2._parse_results(fields, response), expected)
-
-
-class TestXPackSQL(TestCase):
-
-    def test_parse_results(self):
-        response = {
-            "columns": [
-                {
-                    "name": "account_number",
-                    "type": "long"
-                },
-                {
-                    "name": "firstname",
-                    "type": "text"
-                },
-                {
-                    "name": "geo.lat",
-                    "type": "long"
-                },
-                {
-                    "name": "geo.long",
-                    "type": "long"
-                },
-            ],
-            "rows": [
-                [
-                    1000,
-                    "Nicolas",
-                    2423,
-                    7654
-                ],
-                [
-                    999,
-                    "Dorothy",
-                    None,
-                    None
-                ]
-            ]
-        }
-        expected = {
-            'columns': [
-                {
-                    'friendly_name': 'account_number',
-                    'name': 'account_number',
-                    'type': 'integer'
-                },
-                {
-                    'friendly_name': 'firstname',
-                    'name': 'firstname',
-                    'type': 'string'
-                },
-                {
-                    'friendly_name': 'geo.lat',
-                    'name': 'geo.lat',
-                    'type': 'integer'
-                },
-                {
-                    'friendly_name': 'geo.long',
-                    'name': 'geo.long',
-                    'type': 'integer'
-                }
-            ],
-            'rows': [
-                {
-                    'account_number': 1000,
-                    'firstname': 'Nicolas',
-                    'geo.lat': 2423,
-                    'geo.long': 7654
-                },
-                {
-                    'account_number': 999,
-                    'firstname': 'Dorothy',
-                    'geo.lat': None,
-                    'geo.long': None
-                }
-            ]
-        }
-        self.assertDictEqual(XPackSQLElasticSearch._parse_results(None, response), expected)
+        self.assertDictEqual(Elasticsearch._parse_results(fields, response), expected)

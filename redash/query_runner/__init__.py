@@ -3,11 +3,7 @@ import logging
 from contextlib import ExitStack
 from dateutil import parser
 from functools import wraps
-import socket
-import ipaddress
-from urllib.parse import urlparse
 
-from six import text_type
 from sshtunnel import open_tunnel
 from redash import settings
 from redash.utils import json_loads
@@ -83,7 +79,7 @@ class BaseQueryRunner(object):
         """Returns this query runner's configured host.
         This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
 
-        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port` 
+        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
         configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
         """
         if "host" in self.configuration:
@@ -96,7 +92,7 @@ class BaseQueryRunner(object):
         """Sets this query runner's configured host.
         This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
 
-        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port` 
+        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
         configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
         """
         if "host" in self.configuration:
@@ -109,7 +105,7 @@ class BaseQueryRunner(object):
         """Returns this query runner's configured port.
         This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
 
-        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port` 
+        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
         configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
         """
         if "port" in self.configuration:
@@ -122,7 +118,7 @@ class BaseQueryRunner(object):
         """Sets this query runner's configured port.
         This is used primarily for temporarily swapping endpoints when using SSH tunnels to connect to a data source.
 
-        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port` 
+        `BaseQueryRunner`'s naïve implementation supports query runner implementations that store endpoints using `host` and `port`
         configuration values. If your query runner uses a different schema (e.g. a web address), you should override this function.
         """
         if "port" in self.configuration:
@@ -210,9 +206,10 @@ class BaseSQLQueryRunner(BaseQueryRunner):
 
 
 def is_private_address(url):
-    hostname = urlparse(url).hostname
-    ip_address = socket.gethostbyname(hostname)
-    return ipaddress.ip_address(text_type(ip_address)).is_private
+    return False
+    # hostname = urlparse(url).hostname
+    # ip_address = socket.gethostbyname(hostname)
+    # return ipaddress.ip_address(text_type(ip_address)).is_private
 
 
 class BaseHTTPQueryRunner(BaseQueryRunner):

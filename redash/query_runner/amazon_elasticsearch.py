@@ -1,4 +1,4 @@
-from .elasticsearch2 import ElasticSearch2
+from .elasticsearch import Elasticsearch, ElasticsearchOpenDistroSQL
 from . import register
 
 try:
@@ -10,25 +10,18 @@ except ImportError:
     enabled = False
 
 
-class AmazonElasticsearchService(ElasticSearch2):
-    @classmethod
-    def name(cls):
-        return "Amazon Elasticsearch Service"
+class AmazonElasticsearchServiceMixin:
 
     @classmethod
     def enabled(cls):
         return enabled
 
     @classmethod
-    def type(cls):
-        return "aws_es"
-
-    @classmethod
     def configuration_schema(cls):
         return {
             "type": "object",
             "properties": {
-                "server": {"type": "string", "title": "Endpoint"},
+                "url": {"type": "string", "title": "Endpoint"},
                 "region": {"type": "string"},
                 "access_key": {"type": "string", "title": "Access Key"},
                 "secret_key": {"type": "string", "title": "Secret Key"},
@@ -37,22 +30,18 @@ class AmazonElasticsearchService(ElasticSearch2):
                     "title": "Use AWS IAM Profile",
                 },
             },
-            "secret": ["secret_key"],
             "order": [
-                "server",
+                "url",
                 "region",
                 "access_key",
                 "secret_key",
                 "use_aws_iam_profile",
             ],
-            "required": ["server", "region"],
+            "required": ["url", "region"],
+            "secret": ["secret_key"],
         }
 
-    def __init__(self, configuration):
-        super(AmazonElasticsearchService, self).__init__(configuration)
-
-        region = configuration["region"]
-        cred = None
+    def get_aws_auth(self, configuration):
         if configuration.get("use_aws_iam_profile", False):
             cred = credentials.get_credentials(session.Session())
         else:
@@ -60,8 +49,38 @@ class AmazonElasticsearchService(ElasticSearch2):
                 access_key=configuration.get("access_key", ""),
                 secret_key=configuration.get("secret_key", ""),
             )
+        return AWSV4Sign(cred, configuration["region"], "es")
 
-        self.auth = AWSV4Sign(cred, region, "es")
+
+class AmazonElasticsearchService(AmazonElasticsearchServiceMixin, Elasticsearch):
+
+    @classmethod
+    def name(cls):
+        return "Amazon Elasticsearch Service"
+
+    @classmethod
+    def type(cls):
+        return "aws_es"
+
+    def __init__(self, configuration):
+        super(AmazonElasticsearchService, self).__init__(configuration)
+        self.auth = self.get_aws_auth(configuration)
+
+
+class AmazonElasticsearchServiceSQL(AmazonElasticsearchServiceMixin, ElasticsearchOpenDistroSQL):
+
+    @classmethod
+    def name(cls):
+        return "Amazon Elasticsearch Service (SQL)"
+
+    @classmethod
+    def type(cls):
+        return "aws_es_sql"
+
+    def __init__(self, configuration):
+        super(AmazonElasticsearchServiceSQL, self).__init__(configuration)
+        self.auth = self.get_aws_auth(configuration)
 
 
 register(AmazonElasticsearchService)
+register(AmazonElasticsearchServiceSQL)
