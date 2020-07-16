@@ -1,4 +1,4 @@
-import { isNil, extend, each, includes, map, sortBy } from "lodash";
+import { isNil, extend, each, includes, map, merge, sortBy } from "lodash";
 import chooseTextColorForBackground from "@/lib/chooseTextColorForBackground";
 import { ColorPaletteArray } from "@/visualizations/ColorPalette";
 import { cleanNumber, normalizeValue, getSeriesAxis } from "./utils";
@@ -18,6 +18,7 @@ function getHoverInfoPattern(options) {
 
 function prepareBarSeries(series, options) {
   series.type = "bar";
+  series.cliponaxis = false;
   if (options.showDataLabels) {
     series.textposition = "inside";
   }
@@ -111,7 +112,12 @@ function prepareSeries(series, options, additionalOptions) {
     yErrorValues.push(yError);
   });
 
-  const plotlySeries = {
+  try {
+    var customDataOptions = JSON.parse(options.customDataOptionsJson);
+  } catch (e) {
+    customDataOptions = {};
+  }
+  var plotlySeries = {
     visible: true,
     hoverinfo: hoverInfoPattern,
     x: xValues,
@@ -133,20 +139,26 @@ function prepareSeries(series, options, additionalOptions) {
 
   switch (seriesOptions.type) {
     case "column":
-      return prepareBarSeries(plotlySeries, options, additionalOptions);
+      plotlySeries = prepareBarSeries(plotlySeries, options, additionalOptions);
+      break;
     case "line":
-      return prepareLineSeries(plotlySeries, options, additionalOptions);
+      plotlySeries = prepareLineSeries(plotlySeries, options, additionalOptions);
+      break;
     case "area":
-      return prepareAreaSeries(plotlySeries, options, additionalOptions);
+      plotlySeries = prepareAreaSeries(plotlySeries, options, additionalOptions);
+      break;
     case "scatter":
-      return prepareScatterSeries(plotlySeries, options, additionalOptions);
+      plotlySeries = prepareScatterSeries(plotlySeries, options, additionalOptions);
+      break;
     case "bubble":
-      return prepareBubbleSeries(plotlySeries, options, additionalOptions);
+      plotlySeries = prepareBubbleSeries(plotlySeries, options, additionalOptions);
+      break;
     case "box":
-      return prepareBoxSeries(plotlySeries, options, additionalOptions);
-    default:
-      return plotlySeries;
+      plotlySeries = prepareBoxSeries(plotlySeries, options, additionalOptions);
+      break;
   }
+
+  return merge(plotlySeries, customDataOptions);
 }
 
 export default function prepareDefaultData(seriesList, options) {

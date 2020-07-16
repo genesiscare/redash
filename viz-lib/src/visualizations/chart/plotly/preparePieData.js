@@ -1,4 +1,4 @@
-import { isString, each, extend, includes, map, reduce } from "lodash";
+import { isString, each, extend, includes, map, merge, reduce } from "lodash";
 import d3 from "d3";
 import chooseTextColorForBackground from "@/lib/chooseTextColorForBackground";
 import { ColorPaletteArray } from "@/visualizations/ColorPalette";
@@ -68,7 +68,13 @@ function prepareSeries(series, options, additionalOptions) {
   const markerColors = map(series.data, row => getValueColor(row.x));
   const textColors = map(markerColors, c => chooseTextColorForBackground(c));
 
-  return {
+  try {
+    var customDataOptions = JSON.parse(options.customDataOptionsJson);
+  } catch (e) {
+    customDataOptions = {};
+  }
+
+  const plotlySeries = merge({
     visible: true,
     values,
     labels,
@@ -91,7 +97,9 @@ function prepareSeries(series, options, additionalOptions) {
       y: [yPosition, yPosition + cellHeight - yPadding],
     },
     sourceData,
-  };
+  }, customDataOptions);
+
+  return plotlySeries;
 }
 
 export default function preparePieData(seriesList, options) {

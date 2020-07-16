@@ -9,8 +9,10 @@ import SeriesSettings from "./SeriesSettings";
 import ColorsSettings from "./ColorsSettings";
 import DataLabelsSettings from "./DataLabelsSettings";
 import CustomChartSettings from "./CustomChartSettings";
+import CustomOptionsSettings from "./CustomOptionsSettings";
 
 import "./editor.less";
+
 
 const isCustomChart = options => options.globalSeriesType === "custom";
 const isPieChart = options => options.globalSeriesType === "pie";
@@ -54,6 +56,12 @@ export default createTabbedEditor([
     key: "DataLabels",
     title: "Data Labels",
     component: DataLabelsSettings,
+    isAvailable: options => !isCustomChart(options),
+  },
+  {
+    key: "CustomOptions",
+    title: "Custom Options",
+    component: CustomOptionsSettings,
     isAvailable: options => !isCustomChart(options),
   },
 ]);

@@ -12,9 +12,11 @@ const DEFAULT_OPTIONS = {
   seriesOptions: {},
   valuesOptions: {},
   columnMapping: {},
-  direction: { type: "counterclockwise" },
+  direction: { type: "clockwise" },
   sizemode: "diameter",
   coefficient: 1,
+  customDataOptionsJson: "{}",
+  customLayoutOptionsJson: "{}",
 
   // showDataLabels: false, // depends on chart type
   numberFormat: "0,0[.]00000",
