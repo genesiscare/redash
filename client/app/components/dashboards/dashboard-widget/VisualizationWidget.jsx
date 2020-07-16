@@ -85,6 +85,7 @@ RefreshIndicator.defaultProps = { refreshStartedAt: null };
 
 function VisualizationWidgetHeader({ widget, refreshStartedAt, parameters, onParametersUpdate }) {
   const canViewQuery = currentUser.hasPermission("view_query");
+  const widgetTitle = widget.visualization.options.widgetTitle;
 
   return (
     <>
@@ -94,7 +95,7 @@ function VisualizationWidgetHeader({ widget, refreshStartedAt, parameters, onPar
           <p>
             <QueryLink query={widget.getQuery()} visualization={widget.visualization} readOnly={!canViewQuery} />
           </p>
-          {!isEmpty(widget.getQuery().description) && (
+          {!isEmpty(widget.getQuery().description) && widgetTitle !== "hide" && widgetTitle !== "viz" && (
             <HtmlContent className="text-muted markdown query--description">
               {markdown.toHTML(widget.getQuery().description || "")}
             </HtmlContent>

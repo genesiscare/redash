@@ -1,4 +1,4 @@
-import { isEqual, extend, map, sortBy, findIndex, filter, pick, omit } from "lodash";
+import { clone, isEqual, extend, map, sortBy, findIndex, filter, pick, omit } from "lodash";
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import PropTypes from "prop-types";
 import Modal from "antd/lib/modal";
@@ -97,7 +97,6 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
   const [name, setName] = useState(defaultState.name);
   const [nameChanged, setNameChanged] = useState(false);
   const [options, setOptions] = useState(defaultState.options);
-
   const [saveInProgress, setSaveInProgress] = useState(false);
 
   useEffect(() => {
@@ -120,6 +119,12 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
   function onNameChanged(newName) {
     setName(newName);
     setNameChanged(newName !== name);
+  }
+
+  function onWidgetTitleChanged(newWidgetTitle) {
+    const newOptions = clone(options);
+    newOptions.widgetTitle = newWidgetTitle;
+    setOptions(newOptions);
   }
 
   function onOptionsChanged(newOptions) {
@@ -155,6 +160,13 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
   const availableVisualizations = isNew
     ? filter(sortBy(registeredVisualizations, ["name"]), vis => !vis.isDeprecated)
     : pick(registeredVisualizations, [type]);
+
+  const widgetTitleOptions = [
+    {"key": "both", "name": "Visualization and query name"},
+    {"key": "viz", "name": "Only visualization name"},
+    {"key": "query", "name": "Only query name"},
+    {"key": "hide", "name": "No title"},
+  ];
 
   return (
     <Modal
@@ -196,6 +208,20 @@ function EditVisualizationDialog({ dialog, visualization, query, queryResult }) 
               value={name}
               onChange={event => onNameChanged(event.target.value)}
             />
+          </div>
+          <div className="m-b-15">
+            <label htmlFor="widget-title">Widget Title</label>
+            <Select
+              id="widget-title"
+              className="w-100"
+              value={options.widgetTitle}
+              onChange={onWidgetTitleChanged}>
+              {map(widgetTitleOptions, o => (
+                <Select.Option key={o.key}>
+                  {o.name}
+                </Select.Option>
+              ))}
+            </Select>
           </div>
           <div data-test="VisualizationEditor">
             <Editor

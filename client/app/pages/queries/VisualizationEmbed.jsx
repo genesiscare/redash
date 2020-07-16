@@ -28,7 +28,7 @@ function VisualizationEmbedHeader({ queryName, queryDescription, visualization }
     <div className="embed-heading p-b-10 p-r-15 p-l-15">
       <h3>
         <img src={logoUrl} alt="Redash Logo" style={{ height: "24px", verticalAlign: "text-bottom" }} />
-        <VisualizationName visualization={visualization} /> {queryName}
+        <VisualizationName visualization={visualization} queryName={queryName} />
         {queryDescription && (
           <small>
             <HtmlContent className="markdown text-muted">{markdown.toHTML(queryDescription || "")}</HtmlContent>

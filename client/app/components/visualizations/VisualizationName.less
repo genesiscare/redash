@@ -1,14 +1,14 @@
-.visualization-name:empty + span {
-  color: rgba(0, 0, 0, 0.8);
+.query-name {
+  &:before {
+    content: "−";
+    margin: 0 5px;
+  }
 }
 
-.visualization-name {
-  &:after {
-    content: "−";
-    margin-left: 5px;
-  }
-
-  &:empty:after {
+.visualization-name:empty + .query-name {
+  &:before {
     content: none;
   }
+
+  color: rgba(0, 0, 0, 0.8);
 }

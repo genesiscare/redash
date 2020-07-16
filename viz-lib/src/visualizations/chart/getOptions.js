@@ -2,6 +2,7 @@ import { merge } from "lodash";
 import { visualizationsSettings } from "@/visualizations/visualizationsSettings";
 
 const DEFAULT_OPTIONS = {
+  widgetTitle: "both",
   globalSeriesType: "column",
   sortX: true,
   legend: { enabled: true, placement: "auto" },

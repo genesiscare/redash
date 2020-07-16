@@ -22,7 +22,7 @@ function QueryLink({ query, visualization, readOnly }) {
 
   return (
     <a href={readOnly ? null : getUrl()} className="query-link">
-      <VisualizationName visualization={visualization} /> <span>{query.name}</span>
+      <VisualizationName visualization={visualization} queryName={query.name} />
     </a>
   );
 }
