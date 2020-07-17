@@ -13,7 +13,7 @@ import { prepareCustomChartData, createCustomChartRenderer } from "./customChart
 
 Plotly.register([bar, pie, histogram, box, heatmap]);
 Plotly.setPlotConfig({
-  modeBarButtonsToRemove: ["sendDataToCloud"],
+  modeBarButtonsToRemove: ["sendDataToCloud", "select2d", "lasso2d", "zoomIn2d", "zoomOut2d", "autoScale2d", "toggleSpikelines", "hoverClosestGl2d", "hoverClosestPie"],
 });
 
 export {
