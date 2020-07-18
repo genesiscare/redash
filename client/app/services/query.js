@@ -1,6 +1,7 @@
 import moment from "moment";
 import debug from "debug";
 import Mustache from "mustache";
+import sqlFormatter from "sql-formatter";
 import { axios } from "@/services/axios";
 import {
   zipObject,
@@ -409,7 +410,8 @@ QueryService.format = function formatQuery(syntax, query) {
       return Promise.reject(String(err));
     }
   } else if (syntax === "sql") {
-    return axios.post("api/queries/format", { query }).then(data => data.query);
+    const formatted = sqlFormatter.format(query);
+    return Promise.resolve(formatted);
   } else {
     return Promise.reject("Query formatting is not supported for your data source syntax.");
   }

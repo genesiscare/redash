@@ -488,12 +488,6 @@ KYLIN_ACCEPT_PARTIAL = parse_boolean(
     os.environ.get("REDASH_KYLIN_ACCEPT_PARTIAL", "false")
 )
 
-# sqlparse
-SQLPARSE_FORMAT_OPTIONS = {
-    "reindent": parse_boolean(os.environ.get("SQLPARSE_FORMAT_REINDENT", "true")),
-    "keyword_case": os.environ.get("SQLPARSE_FORMAT_KEYWORD_CASE", "upper"),
-}
-
 # requests
 REQUESTS_ALLOW_REDIRECTS = parse_boolean(
     os.environ.get("REDASH_REQUESTS_ALLOW_REDIRECTS", "false")
