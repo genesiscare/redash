@@ -32,6 +32,8 @@ from redash.models.parameterized_query import ParameterizedQuery
 
 # Ordering map for relationships
 order_map = {
+    "id": "id",
+    "-id": "-id",
     "name": "lowercase_name",
     "-name": "-lowercase_name",
     "created_at": "created_at",
@@ -47,7 +49,7 @@ order_map = {
 }
 
 order_results = partial(
-    _order_results, default_order="-created_at", allowed_orders=order_map
+    _order_results, default_order="-id", allowed_orders=order_map
 )
 
 

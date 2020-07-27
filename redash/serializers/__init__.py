@@ -122,6 +122,8 @@ def serialize_query(
         "updated_at": query.updated_at,
         "created_at": query.created_at,
         "data_source_id": query.data_source_id,
+        "data_source_name": query.data_source.name,
+        "data_source_type": query.data_source.type,
         "options": query.options,
         "version": query.version,
         "tags": query.tags or [],

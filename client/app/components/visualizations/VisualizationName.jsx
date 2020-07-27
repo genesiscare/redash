@@ -6,7 +6,6 @@ import "./VisualizationName.less";
 function VisualizationName({ visualization, queryName }) {
   const config = registeredVisualizations[visualization.type];
   const widgetTitle = visualization.options.widgetTitle;
-  console.log(widgetTitle);
 
   if (widgetTitle === "hide") {
     return null;

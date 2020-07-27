@@ -19,6 +19,7 @@ import Layout from "@/components/layouts/ContentWithSidebar";
 import { Query } from "@/services/query";
 import { currentUser } from "@/services/auth";
 import location from "@/services/location";
+import { IMG_ROOT } from "@/services/data-source";
 
 import QueriesListEmptyState from "./QueriesListEmptyState";
 
@@ -78,13 +79,23 @@ class QueriesList extends React.Component {
         width: null,
       }
     ),
-    Columns.custom((text, item) => item.user.name, { title: "Created By" }),
-    Columns.dateTime.sortable({ title: "Created At", field: "created_at" }),
-    Columns.dateTime.sortable({ title: "Last Executed At", field: "retrieved_at", orderByField: "executed_at" }),
+    Columns.custom.sortable((text, item) => <span className="query-id">{item.id}</span>, {
+      title: "ID",
+      field: "id",
+    }),
+    Columns.custom((text, item) => <img className="data-source-icon" alt={item.data_source_type} src={`${IMG_ROOT}/${item.data_source_type}.png`}></img>, {
+      className: "p-r-0",
+      width: "1%",
+    }),
+    Columns.custom((text, item) => item.data_source_name, {
+      title: "Data Source",
+      field: "data_source_name",
+    }),
     Columns.custom.sortable((text, item) => <SchedulePhrase schedule={item.schedule} isNew={item.isNew()} />, {
-      title: "Refresh Schedule",
+      title: "Refresh",
       field: "schedule",
     }),
+    Columns.custom((text, item) => item.user.name, { title: "Created By" }),
   ];
 
   componentDidMount() {

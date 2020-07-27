@@ -2,3 +2,13 @@
 .search button {
   height: 35px;
 }
+
+.query-id::before {
+  content: "#";
+  color: #d4d4d4;
+}
+
+.data-source-icon {
+  max-width: 20px;
+  max-height: 20px;
+}
