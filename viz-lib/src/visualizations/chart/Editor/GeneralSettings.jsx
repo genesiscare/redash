@@ -182,11 +182,14 @@ export default function GeneralSettings({ options, data, onOptionsChange }) {
             <Select.Option value="hidden" data-test="Chart.LegendPlacement.HideLegend">
               Hide legend
             </Select.Option>
-            <Select.Option value="auto" data-test="Chart.LegendPlacement.Auto">
-              Right
+            <Select.Option value="above" data-test="Chart.LegendPlacement.Above">
+              Top and centered
             </Select.Option>
             <Select.Option value="below" data-test="Chart.LegendPlacement.Below">
               Bottom
+            </Select.Option>
+            <Select.Option value="auto" data-test="Chart.LegendPlacement.Auto">
+              Right
             </Select.Option>
           </Select>
         </Section>

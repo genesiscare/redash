@@ -38,6 +38,28 @@ function placeLegendNextToPlot(plotlyElement, layout, updatePlot) {
   updatePlot(plotlyElement, pick(layout, ["width", "height", "legend"]));
 }
 
+function placeLegendAbovePlot(plotlyElement, layout, updatePlot) {
+  const transformName = find(
+    ["transform", "WebkitTransform", "MozTransform", "MsTransform", "OTransform"],
+    prop => prop in plotlyElement.style
+  );
+
+  layout.legend = {
+    orientation: "h",
+    y: 1.05,
+    x: 0.5,
+    xanchor: "center",
+    yanchor: "bottom",
+  };
+
+  const legend = plotlyElement.querySelector(".legend");
+  if (legend) {
+    legend.style[transformName] = null;
+  }
+
+  updatePlot(plotlyElement, pick(layout, ["width", "height", "legend"]));
+}
+
 function placeLegendBelowPlot(plotlyElement, layout, updatePlot) {
   const transformName = find(
     ["transform", "WebkitTransform", "MozTransform", "MsTransform", "OTransform"],
@@ -83,7 +105,7 @@ function placeLegendBelowPlot(plotlyElement, layout, updatePlot) {
           result = result || b;
           return {
             top: Math.min(result.top, b.top),
-            bottom: Math.max(result.bottom, b.bottom),
+            bottom: Math.max(result.bottom, b.bottom) + 5,
           };
         },
         null
@@ -121,6 +143,9 @@ export default function applyLayoutFixes(plotlyElement, layout, options, updateP
     switch (options.legend.placement) {
       case "auto":
         placeLegendAuto(plotlyElement, layout, updatePlot);
+        break;
+      case "above":
+        placeLegendAbovePlot(plotlyElement, layout, updatePlot);
         break;
       case "below":
         placeLegendBelowPlot(plotlyElement, layout, updatePlot);
