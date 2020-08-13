@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Any, Dict, List, Optional, Set, Tuple
 
-from redash.query_runner import TYPE_BOOLEAN, TYPE_DATE, TYPE_FLOAT, TYPE_INTEGER, TYPE_STRING
+from redash.query_runner import TYPE_BOOLEAN, TYPE_DATE, TYPE_DATETIME, TYPE_FLOAT, TYPE_INTEGER, TYPE_STRING
 from redash.query_runner import BaseHTTPQueryRunner, register
 from redash.utils import json_dumps, json_loads
 
@@ -17,6 +17,7 @@ ELASTICSEARCH_TYPES_MAPPING = {
     "boolean": TYPE_BOOLEAN,
     "string": TYPE_STRING,
     "date": TYPE_DATE,
+    "datetime": TYPE_DATETIME,
     "object": TYPE_STRING,
 }
 TYPES_MAP = {

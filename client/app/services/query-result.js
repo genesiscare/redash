@@ -122,7 +122,7 @@ class QueryResult {
 
       const columnTypes = {};
 
-      // TODO: we should stop manipulating incoming data, and switch to relaying
+      // TODO: we should stop manipulating incoming data, and switch to relying
       // on the column type set by the backend. This logic is prone to errors,
       // and better be removed. Kept for now, for backward compatability.
       each(this.query_result.data.rows, row => {
@@ -131,10 +131,10 @@ class QueryResult {
           if (isNumber(v)) {
             newType = "float";
           } else if (isString(v) && v.match(/^\d{4}-\d{2}-\d{2}T/)) {
-            row[k] = moment.utc(v);
+            row[k] = moment(v);
             newType = "datetime";
           } else if (isString(v) && v.match(/^\d{4}-\d{2}-\d{2}$/)) {
-            row[k] = moment.utc(v);
+            row[k] = moment(v);
             newType = "date";
           } else if (typeof v === "object" && v !== null) {
             row[k] = JSON.stringify(v);
