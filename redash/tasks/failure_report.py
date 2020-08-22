@@ -1,9 +1,10 @@
 import datetime
 import re
 from collections import Counter
+from flask import render_template
 from redash.tasks.general import send_mail
 from redash import redis_connection, settings, models
-from redash.utils import json_dumps, json_loads, base_url, render_template
+from redash.utils import json_dumps, json_loads, base_url
 from redash.worker import get_job_logger
 
 logger = get_job_logger(__name__)
@@ -57,7 +58,7 @@ def send_failure_report(user_id):
             len(unique_errors.keys())
         )
         html, text = [
-            render_template("emails/failures.{}".format(f), context)
+            render_template("emails/failures.{}".format(f), **context)
             for f in ["html", "txt"]
         ]
 
