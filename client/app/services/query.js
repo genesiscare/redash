@@ -412,6 +412,8 @@ QueryService.format = function formatQuery(syntax, query) {
   } else if (syntax === "sql") {
     const formatted = sqlFormatter.format(query);
     return Promise.resolve(formatted);
+  } else if (syntax === "python") {
+    return axios.post("api/queries/format/python", { query }).then(data => data.query);
   } else {
     return Promise.reject("Query formatting is not supported for your data source syntax.");
   }

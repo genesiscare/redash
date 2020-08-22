@@ -1,3 +1,4 @@
+import black
 from flask import jsonify, request, url_for
 from flask_login import login_required
 from flask_restful import abort
@@ -51,6 +52,20 @@ order_map = {
 order_results = partial(
     _order_results, default_order="-id", allowed_orders=order_map
 )
+
+
+@routes.route(org_scoped_rule("/api/queries/format/python"), methods=["POST"])
+@login_required
+def format_python_query(org_slug=None):
+    arguments = request.get_json(force=True)
+    query = arguments.get("query", "")
+    mode = black.FileMode(
+        target_versions={black.TargetVersion.PY37},
+        line_length=120,
+    )
+    return jsonify(
+        {"query": black.format_str(query, mode=mode)}
+    )
 
 
 class QuerySearchResource(BaseResource):

@@ -35,3 +35,5 @@ azure-kusto-data==0.0.35
 pyexasol==0.12.0
 python-rapidjson==0.8.0
 pyodbc==4.0.28
+pandas==1.1.1
+scipy==1.5.2
