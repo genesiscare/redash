@@ -1,9 +1,11 @@
-import { find, isArray, get, first, map, intersection, isEqual, isEmpty } from "lodash";
+import { find, isArray, get, first, includes, map, intersection, isEqual, isEmpty } from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 import Select from "antd/lib/select";
 
 const { Option } = Select;
+const ALL_VALUES = "###Redash::QueryBasedParameters::SelectAll###";
+const NONE_VALUES = "###Redash::QueryBasedParameters::Clear###";
 
 export default class QueryBasedParameterInput extends React.Component {
   static propTypes = {
@@ -81,6 +83,17 @@ export default class QueryBasedParameterInput extends React.Component {
   render() {
     const { className, value, mode, onSelect, ...otherProps } = this.props;
     const { loading, options } = this.state;
+
+    const onChange = (value) => {
+      if (mode === "multiple" && includes(value, ALL_VALUES)) {
+        value = [...map(options, option => option.value)];
+      }
+      if (mode === "multiple" && includes(value, NONE_VALUES)) {
+        value = [];
+      }
+      onSelect(value);
+    }
+
     return (
       <span>
         <Select
@@ -89,18 +102,36 @@ export default class QueryBasedParameterInput extends React.Component {
           loading={loading}
           mode={mode}
           value={this.state.value}
-          onChange={onSelect}
+          onChange={onChange}
           dropdownMatchSelectWidth={false}
           optionFilterProp="children"
           showSearch
-          showArrow
+          showArrow={mode !== "multiple"}
+          allowClear={mode === "multiple"}
           notFoundContent={isEmpty(options) ? "No options available" : null}
           {...otherProps}>
-          {options.map(option => (
+          {mode !== "multiple" && options.map(option => (
             <Option value={option.value} key={option.value}>
               {option.name}
             </Option>
           ))}
+          {mode === "multiple" && [
+            <Select.Option key={NONE_VALUES} data-test="ClearOption">
+              <i className="fa fa-square-o m-r-5" />
+              Clear
+            </Select.Option>,
+            <Select.Option key={ALL_VALUES} data-test="SelectAllOption">
+              <i className="fa fa-check-square-o m-r-5" />
+              Select All
+            </Select.Option>,
+            <Select.OptGroup key="Values" title="Values">
+              {options.map(option => (
+                <Option value={option.value} key={option.value}>
+                  {option.name}
+                </Option>
+              ))}
+            </Select.OptGroup>,
+          ]}
         </Select>
       </span>
     );

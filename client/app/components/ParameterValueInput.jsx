@@ -1,4 +1,4 @@
-import { isEqual, isEmpty } from "lodash";
+import { includes, isEqual, isEmpty, map } from "lodash";
 import React from "react";
 import PropTypes from "prop-types";
 import Select from "antd/lib/select";
@@ -11,6 +11,8 @@ import QueryBasedParameterInput from "./QueryBasedParameterInput";
 import "./ParameterValueInput.less";
 
 const { Option } = Select;
+const ALL_VALUES = "###Redash::Parameters::SelectAll###";
+const NONE_VALUES = "###Redash::Parameters::Clear###";
 
 const multipleValuesProps = {
   maxTagCount: 3,
@@ -98,24 +100,54 @@ class ParameterValueInput extends React.Component {
     const enumOptionsArray = enumOptions.split("\n").filter(v => v !== "");
     // Antd Select doesn't handle null in multiple mode
     const normalize = val => (parameter.multiValuesOptions && val === null ? [] : val);
+
+    const onChange = (value) => {
+      if (parameter.multiValuesOptions && includes(value, ALL_VALUES)) {
+        value = [...map(enumOptionsArray, option => option)];
+      }
+      if (parameter.multiValuesOptions && includes(value, NONE_VALUES)) {
+        value = [];
+      }
+      this.onSelect(value);
+    }
+
     return (
       <Select
         className={this.props.className}
         mode={parameter.multiValuesOptions ? "multiple" : "default"}
+
         optionFilterProp="children"
         value={normalize(value)}
-        onChange={this.onSelect}
+        onChange={onChange}
         dropdownMatchSelectWidth={false}
         showSearch
-        showArrow
+        showArrow={!parameter.multiValuesOptions}
+        allowClear={!!parameter.multiValuesOptions}
         style={{ minWidth: 60 }}
         notFoundContent={isEmpty(enumOptionsArray) ? "No options available" : null}
         {...multipleValuesProps}>
-        {enumOptionsArray.map(option => (
+        {!parameter.multiValuesOptions && enumOptionsArray.map(option => (
           <Option key={option} value={option}>
             {option}
           </Option>
         ))}
+        {parameter.multiValuesOptions && [
+          <Select.Option key={NONE_VALUES} data-test="ClearOption">
+            <i className="fa fa-square-o m-r-5" />
+            Clear
+          </Select.Option>,
+          <Select.Option key={ALL_VALUES} data-test="SelectAllOption">
+            <i className="fa fa-check-square-o m-r-5" />
+            Select All
+          </Select.Option>,
+          <Select.OptGroup key="Values" title="Values">
+            {enumOptionsArray.map(option => (
+              <Option key={option} value={option}>
+                {option}
+              </Option>
+            ))}
+          </Select.OptGroup>,
+        ]}
       </Select>
     );
   }
