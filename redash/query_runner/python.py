@@ -316,6 +316,7 @@ class Python(BaseQueryRunner):
         self._current_user = user
 
         try:
+            json_data = None
             error = None
             code = compile_restricted(query, "<string>", "exec")
 
@@ -357,17 +358,21 @@ class Python(BaseQueryRunner):
             #       One option is to use ETA with Celery + timeouts on workers
             #       And replacement of worker process every X requests handled.
 
-            exec(code, restricted_globals)
+            try:
+                exec(code, restricted_globals)
+            except Exception as e:
+                line_no = e.__traceback__.tb_next.tb_lineno
+                line = query.split("\n")[line_no - 1]
+                error = type(e).__name__ + ": " + str(e) + "\ncaused by line " + str(line_no) + ": " + line
+            else:
+                if not isinstance(restricted_globals["result"], pd.DataFrame):
+                    raise ValueError("result is not a pandas DataFrame")
 
-            if not isinstance(restricted_globals["result"], pd.DataFrame):
-                raise ValueError("result is not a pandas DataFrame")
-
-            result = self.result_from_df(restricted_globals["result"])
-            result["log"] = self._custom_print.lines
-            json_data = json_dumps(result)
+                result = self.result_from_df(restricted_globals["result"])
+                result["log"] = self._custom_print.lines
+                json_data = json_dumps(result)
         except Exception as e:
             error = type(e).__name__ + ": " + str(e)
-            json_data = None
 
         return json_data, error
 

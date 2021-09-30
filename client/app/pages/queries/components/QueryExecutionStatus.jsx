@@ -28,7 +28,7 @@ export default function QueryExecutionStatus({ status, updatedAt, error, isCance
     case "failed":
       message = (
         <React.Fragment>
-          Error running query: <strong>{error}</strong>
+          Error running query:<br /><code style={{display: "block", whiteSpace: "pre", padding: 0, marginTop: 5}}>{error}</code>
         </React.Fragment>
       );
       break;
